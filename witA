@@ -1,0 +1,124 @@
+//Playstate update
+FlxG.collide(_witch, walls,setWitchWay);		
+//Gun
+var couldron = new FlxTypedWeapon<FlxBullet>(
+//a flxweapon set up
+setWitch(_witch);
+//var limitWitch:Float = .04;
+//shootWitchDelay1 += elapsed / 4.5;
+if (shootWitchDelay1 >= limit)
+{
+		//_witch.facing == FlxObject.DOWN;
+		//_witch.isShooting = true;
+		//_witch.facing = FlxObject.DOWN; 
+		//_witch.animation.play("d");
+		//_witch.animation.finishCallback = function(s:String)
+		//{
+		////trace ("------------------------ " + s + " anim finished ------------------"); 
+		//couldron.fireFromParentFacing(new FlxBounds<Float>(0, 0));
+		//_witch.isShooting = false;
+		//if (_witch.animation.getByName("d")) shootWitchDelay1 = 0;
+		//}
+		//_witch.isShooting = false;
+		//shootWitchDelay1 = 0;
+		//if (_witch.animation. == 6) 
+		//{
+				//FlxSpriteUtil.flicker(_witch, 0);
+				//_witch.isShooting = false;
+				//shootWitchDelay1 = 0;
+			//}
+			//couldron.fireFromParentFacing(new FlxBounds<Float>(0, 0));
+			FlxG.watch.add(_witch, "isShooting");
+		}
+//Functions
+public function setWitch(enemy:Witch):Void 
+	{
+		//shootWitchDelay1 = 0;
+		var limitWitchF:Float = .04;		
+		if (shootWitchDelay1 >= 0) shootWitchDelay1 += FlxG.elapsed / 4.5;		
+		if (shootWitchDelay1 >= limitWitchF)
+		{
+			_witch.facing = FlxObject.DOWN;
+			//enemy.seesPlayer = true;
+			//shootWitchDelay1 = 0;
+		} else
+		{
+			enemy.seesPlayer = false;
+			//if (shootWitchDelay1 >= 0) shootWitchDelay1 += FlxG.elapsed / 4.5;
+			//trace ("setcalled" +  " delay ------------------"); 
+		}
+ }	
+	//Functions
+	private function setWitchWay(witcher:Witch, mapWalls:FlxTilemap):Void 
+	{
+		if (witcher.facing == FlxObject.RIGHT)
+		{
+			witcher.velocity.x -= 100;
+			witcher.facing = FlxObject.LEFT;
+		} else if (witcher.facing == FlxObject.LEFT)
+		{
+			witcher.velocity.x += 100;
+			witcher.facing = FlxObject.RIGHT;
+		}		
+	}
+  
+  //Witch Class
+  package; 
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import flixel.math.FlxVelocity;
+import flixel.system.FlxSound;
+using flixel.util.FlxSpriteUtil;
+class Witch extends FlxSprite
+{
+	static inline var SPEED:Float = 45; 
+	public var idleTimer:Float;
+	var moveDirection:Float;
+	var stepSound:FlxSound;  
+	public var seesPlayer:Bool;
+	public var playerPosition:FlxPoint;	
+	public var hitWall:Int;
+	public var fireBullet:Float;	
+	public var isShooting:Bool;
+	public var brain:FSM;		
+	public function new(x:Float, y:Float )
+	{
+		super(x, y); 
+		var graphic =  "assets/images/newWitch.png";
+		loadGraphic(graphic, true, 16, 16);
+		setFacingFlip(FlxObject.LEFT, false, false);
+		setFacingFlip(FlxObject.RIGHT, true, false);
+		animation.add("d", [0, 1, 2, 3,4,5,6], 6, false);
+		animation.add("lr", [11,12,13,14], 6, false);
+		animation.add("left", [11,12,13,14], 6, false);
+		animation.add("u", [15,16,17,18,19,20,21], 6, false);
+		drag.x = drag.y = 10;
+		width = 12;
+		height = 12;
+		offset.x = 4;
+		offset.y = 2; 
+		seesPlayer = false;
+		playerPosition = FlxPoint.get();
+		stepSound = FlxG.sound.load(AssetPaths.step__wav, 0.4);
+		stepSound.proximity(x, y, FlxG.camera.target, FlxG.width * 0.6);		
+		// Everybody move to the right!
+		velocity.x = SPEED;		
+		hitWall = 0;		
+		facing = FlxObject.RIGHT;		
+		//immovable = 
+		solid = true;		
+		brain = new FSM(idle);
+		//isShooting = true;
+	}
+	override public function update(elapsed:Float)
+	{		 			
+		brain.update(elapsed);
+		super.update(elapsed);
+	}	
+	function idle(elapsed:Float){}	
+	function chase(elapsed:Float)	{} 
+}
+
+	
